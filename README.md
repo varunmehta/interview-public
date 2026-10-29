@@ -55,6 +55,14 @@ curl -H "Authorization: Bearer user@example.com" http://localhost:8080/api/conta
 
 The token should be a valid email address. It serves as the user identifier.
 
+## Rate Limiter
+
+The server rate limits requests with an in-memory leaky bucket (`ratelimiter/LeakyBucketRateLimiter`). Each request adds one token, and the bucket drains steadily at `capacity / period`. Any request that would overflow the bucket gets `429 Too Many Requests` with a `Retry-After` header.
+
+A single global bucket is shared by all clients. Every response carries `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` headers. The `/health` endpoint is exempt from the limit.
+
+To tune the limiter, see the Configuration section below.
+
 ## Endpoints
 
 ### Health
@@ -169,6 +177,17 @@ cd go
 make bench
 ```
 
+## Running Tests
+
+### Java
+
+```bash
+cd java
+make test        
+
+./mvnw test
+```
+
 ## Configuration
 
 ### Go
@@ -190,3 +209,5 @@ Configuration is in `src/main/resources/application.properties`:
 | `server.port` | `8080` | Server listen port |
 | `app.data-dir` | `data` | Data directory for database and files |
 | `app.max-upload-size` | `104857600` | Max file upload size (100MB) |
+| `app.rate-limit.capacity`| `10` | Max requests the bucket holds (burst size and requests per period) |
+| `app.rate-limit.period` | `1m` | Time to fully drain the bucket, as a Spring `Duration` (e.g. `30s`, `1m`, `1h`) |
