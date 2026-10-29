@@ -39,7 +39,7 @@ Or without make:
 
 ```bash
 cd java
-./mvnw spring-boot:run -Dspring-boot.run.arguments="--app.seed=true"
+./mvnw spring-boot:run -Dspring-boot.run.arguments="--app.seed=true --app.startup-check=false"
 ./mvnw spring-boot:run
 ```
 
@@ -152,7 +152,7 @@ go run ./cmd/server --seed --files=100         # Custom file count
 ```bash
 cd java
 make seed                                                                              # Default: 10k contacts, 20 files
-./mvnw spring-boot:run -Dspring-boot.run.arguments="--app.seed=true --contacts=50000"  # Custom contact count
+./mvnw spring-boot:run -Dspring-boot.run.arguments="--app.seed=true --app.startup-check=false --contacts=50000"  # Custom contact count
 ```
 
 To reset the database:

@@ -1,13 +1,10 @@
 package com.weavelab.interview.seed;
 
 import com.github.javafaker.Faker;
-import com.weavelab.interview.config.AppConfig;
 import com.weavelab.interview.model.Contact;
-import com.weavelab.interview.model.FileMetadata;
 import com.weavelab.interview.repository.ActivityRepository;
 import com.weavelab.interview.repository.ContactRepository;
 import com.weavelab.interview.repository.FileRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
@@ -23,21 +20,15 @@ public class DataSeeder {
     private final ContactRepository contactRepository;
     private final FileRepository fileRepository;
     private final ActivityRepository activityRepository;
-    private final AppConfig appConfig;
-    private final JdbcTemplate jdbc;
 
     private static final int BATCH_SIZE = 1000;
 
     public DataSeeder(ContactRepository contactRepository,
                       FileRepository fileRepository,
-                      ActivityRepository activityRepository,
-                      AppConfig appConfig,
-                      JdbcTemplate jdbc) {
+                      ActivityRepository activityRepository) {
         this.contactRepository = contactRepository;
         this.fileRepository = fileRepository;
         this.activityRepository = activityRepository;
-        this.appConfig = appConfig;
-        this.jdbc = jdbc;
     }
 
     public void seed(int contactCount, int fileCount) throws IOException {
