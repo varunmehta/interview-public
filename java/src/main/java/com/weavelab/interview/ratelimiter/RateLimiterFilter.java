@@ -4,17 +4,17 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.Duration;
 
-@Component
-@Order(0)
+/**
+ * Global variant: one bucket shared by every client. No longer registered as a Spring bean;
+ * replaced by {@link PerUserRaterLimiterFilter}. Kept for reference and its tests.
+ */
 public class RateLimiterFilter extends OncePerRequestFilter {
 
     // Single shared bucket: every client gets the same global limit.
