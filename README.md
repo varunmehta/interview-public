@@ -59,7 +59,12 @@ The token should be a valid email address. It serves as the user identifier.
 
 The server rate limits requests with an in-memory leaky bucket (`ratelimiter/LeakyBucketRateLimiter`). Each request adds one token, and the bucket drains steadily at `capacity / period`. Any request that would overflow the bucket gets `429 Too Many Requests` with a `Retry-After` header.
 
-A single global bucket is shared by all clients. Every response carries `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` headers. The `/health` endpoint is exempt from the limit.
+Limiting is per user (`ratelimiter/PerUserRaterLimiterFilter`): every user gets the same limit (`capacity` requests per `period`), but each user has their own bucket, keyed on the bearer token email (case-insensitive). One user hitting the limit doesn't affect anyone else. Rate-limited responses carry `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` headers.
+
+- The `/health` endpoint is exempt from the limit.
+- Requests without a valid bearer token aren't rate limited. They pass through, and `/api/*` rejects them with `401`.
+- The older global filter (`ratelimiter/RateLimiterFilter`, one bucket shared by all clients) is still in the code but isn't registered.
+- Known limitation: buckets are in memory and never evicted, so memory grows with the number of distinct users.
 
 To tune the limiter, see the Configuration section below.
 
@@ -209,5 +214,5 @@ Configuration is in `src/main/resources/application.properties`:
 | `server.port` | `8080` | Server listen port |
 | `app.data-dir` | `data` | Data directory for database and files |
 | `app.max-upload-size` | `104857600` | Max file upload size (100MB) |
-| `app.rate-limit.capacity`| `10` | Max requests the bucket holds (burst size and requests per period) |
+| `app.rate-limit.capacity`| `10` | Max requests each user's bucket holds (burst size and requests per period, per user) |
 | `app.rate-limit.period` | `1m` | Time to fully drain the bucket, as a Spring `Duration` (e.g. `30s`, `1m`, `1h`) |
