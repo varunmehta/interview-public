@@ -20,7 +20,7 @@ public class StartupCheck implements CommandLineRunner {
     public void run(String... args) {
         if (seeder.isEmpty()) {
             System.out.println("Database is empty. Run with --seed first:");
-            System.out.println("  ./mvnw spring-boot:run -Dspring-boot.run.arguments=\"--app.seed=true\"");
+            System.out.println("  ./mvnw spring-boot:run -Dspring-boot.run.arguments=\"--app.seed=true --app.startup-check=false\"");
             System.exit(1);
         }
     }
